@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jugveer Sir - Textile Technology Portal</title>
+
+    <!-- ===== FIREBASE ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js">
+    </script>
+
+    <!-- ===== STYLES ===== -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- ===== FONTS ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+
+    <!-- ===== FAVICON ===== -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧵</text></svg>" />
+</head>
+
+<body>
+
+    <!-- ================================================================
+    PARTICLES BACKGROUND
+    ================================================================ -->
+    <div id="particles-container"></div>
+
+    <!-- ================================================================
+    MAIN APP
+    ================================================================ -->
+    <div id="app">
+
+        <!-- ===== TOP BAR ===== -->
+        <header id="main-header">
+            <div class="header-inner">
+                <div class="logo-area">
+                    <span class="logo-icon">🧵</span>
+                    <div class="logo-text">
+                        <span class="logo-title">Jugveer Sir</span>
+                        <span class="logo-sub">Textile Technology</span>
+                    </div>
+                </div>
+
+                <nav id="main-nav">
+                    <a href="#" data-page="home" class="nav-link active">Home</a>
+                    <a href="#" data-page="notices" class="nav-link">Notices</a>
+                    <a href="#" data-page="materials" class="nav-link">Materials</a>
+                    <a href="#" data-page="schedule" class="nav-link">Schedule</a>
+                    <a href="#" data-page="gallery" class="nav-link">Gallery</a>
+                    <a href="#" data-page="contact" class="nav-link">Contact</a>
+                    <a href="#" id="nav-admin-link" class="nav-link admin-link" style="display:none;">Dashboard</a>
+                </nav>
+
+                <div class="header-actions">
+                    <button id="theme-toggle" class="icon-btn" title="Toggle Theme">🌓</button>
+                    <button id="auth-btn" class="btn btn-primary btn-sm">Login</button>
+                    <button id="mobile-menu-btn" class="icon-btn mobile-menu-btn">☰</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== MOBILE NAV ===== -->
+        <div id="mobile-nav" class="mobile-nav">
+            <a href="#" data-page="home" class="nav-link active">Home</a>
+            <a href="#" data-page="notices" class="nav-link">Notices</a>
+            <a href="#" data-page="materials" class="nav-link">Materials</a>
+            <a href="#" data-page="schedule" class="nav-link">Schedule</a>
+            <a href="#" data-page="gallery" class="nav-link">Gallery</a>
+            <a href="#" data-page="contact" class="nav-link">Contact</a>
+            <a href="#" id="mobile-nav-admin" class="nav-link admin-link" style="display:none;">Dashboard</a>
+        </div>
+
+        <!-- ================================================================
+        PAGE CONTAINER
+        ================================================================ -->
+        <main id="page-container">
+
+            <!-- ===== HOME PAGE ===== -->
+            <section id="page-home" class="page active">
+                <!-- Hero -->
+                <section class="hero-section glass-card">
+                    <div class="hero-content">
+                        <div class="hero-badge">🏛️ Rajiv Gandhi Polytechnic, Narwana</div>
+                        <h1 class="hero-title">Welcome to <span class="gradient-text">Textile Technology</span></h1>
+                        <p class="hero-subtitle">Empowering the next generation of textile engineers with knowledge, innovation, and excellence.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" onclick="navigateTo('materials')">📚 Study Materials</button>
+                            <button class="btn btn-outline" onclick="navigateTo('notices')">📢 Latest Notices</button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="hero-ornament">🧵</div>
+                    </div>
+                </section>
+
+                <!-- Welcome Message -->
+                <section class="welcome-section glass-card">
+                    <div class="welcome-avatar">👨‍🏫</div>
+                    <div class="welcome-text">
+                        <h2>Message from <span class="gradient-text">Jugveer Sir</span></h2>
+                        <div id="welcome-message-display">
+                            <p>Welcome to the Textile Technology Department at Rajiv Gandhi Polytechnic, Narwana. Our mission is to provide world-class technical education and shape the future of textile engineering. Stay curious, stay dedicated, and let's weave success together.</p>
+                            <p class="welcome-signature">— Jugveer Sir, HOD Textile Technology</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon">📄</div>
+                        <div class="stat-number" id="stat-notices">0</div>
+                        <div class="stat-label">Notices</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-number" id="stat-materials">0</div>
+                        <div class="stat-label">Study Materials</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-number" id="stat-events">0</div>
+                        <div class="stat-label">Upcoming Events</div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon">🖼️</div>
+                        <div class="stat-number" id="stat-gallery">0</div>
+                        <div class="stat-label">Gallery Items</div>
+                    </div>
+                </div>
+
+                <!-- Latest Notices & Announcements -->
+                <div class="two-col-grid">
+                    <div class="glass-card">
+                        <h3>📢 Latest Notices</h3>
+                        <div id="home-notices-list" class="feed-list">
+                            <p class="empty-message">No notices yet.</p>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3>📣 Announcements</h3>
+                        <div id="home-announcements-list" class="feed-list">
+                            <p class="empty-message">No announcements yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="glass-card">
+                    <h3>📅 Upcoming Events</h3>
+                    <div id="home-events-list" class="feed-list horizontal-scroll">
+                        <p class="empty-message">No upcoming events.</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Preview -->
+                <div class="glass-card">
+                    <h3>🖼️ Gallery</h3>
+                    <div id="home-gallery-preview" class="gallery-grid preview-grid">
+                        <p class="empty-message">No gallery images yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== NOTICES PAGE ===== -->
+            <section id="page-notices" class="page">
+                <div class="page-header">
+                    <h2>📢 Notices</h2>
+                    <p>Stay updated with the latest announcements and notifications.</p>
+                </div>
+                <div id="notices-container" class="feed-list">
+                    <p class="empty-message">No notices available.</p>
+                </div>
+            </section>
+
+            <!-- ===== MATERIALS PAGE ===== -->
+            <section id="page-materials" class="page">
+                <div class="page-header">
+                    <h2>📚 Study Materials</h2>
+                    <p>Access notes, assignments, PDFs, and more.</p>
+                </div>
+                <div id="materials-container">
+                    <p class="empty-message">No materials uploaded yet.</p>
+                </div>
+            </section>
+
+            <!-- ===== SCHEDULE PAGE ===== -->
+            <section id="page-schedule" class="page">
+                <div class="page-header">
+                    <h2>📅 Class Schedule</h2>
+                    <p>Weekly timetable and important dates.</p>
+                </div>
+                <div id="schedule-container">
+                    <p class="empty-message">No schedule available.</p>
+                </div>
+            </section>
+
+            <!-- ===== GALLERY PAGE ===== -->
+            <section id="page-gallery" class="page">
+                <div class="page-header">
+                    <h2>🖼️ Gallery</h2>
+                    <p>Moments from the Textile Technology Department.</p>
+                </div>
+                <div id="gallery-container" class="gallery-grid">
+                    <p class="empty-message">No gallery images yet.</p>
+                </div>
+            </section>
+
+            <!-- ===== CONTACT PAGE ===== -->
+            <section id="page-contact" class="page">
+                <div class="page-header">
+                    <h2>📞 Contact Us</h2>
+                    <p>Get in touch with the Textile Technology Department.</p>
+                </div>
+                <div class="contact-grid">
+                    <div class="glass-card">
+                        <h3>📍 Address</h3>
+                        <p>Rajiv Gandhi Polytechnic<br />Narwana, Haryana<br />India</p>
+                    </div>
+                    <div class="glass-card">
+                        <h3>📧 Email</h3>
+                        <p>textile@rgpnarwana.ac.in</p>
+                    </div>
+                    <div class="glass-card">
+                        <h3>📱 Phone</h3>
+                        <p>+91-12345-67890</p>
+                    </div>
+                    <div class="glass-card">
+                        <h3>🕐 Office Hours</h3>
+                        <p>Mon–Fri: 9:00 AM – 5:00 PM</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ================================================================
+        FOOTER
+        ================================================================ -->
+        <footer id="main-footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="logo-icon">🧵</span>
+                    <span class="footer-title">Jugveer Sir — Textile Technology</span>
+                    <span class="footer-sub">Rajiv Gandhi Polytechnic, Narwana</span>
+                </div>
+                <div class="footer-credit">
+                    <p>Created with ❤️ by <strong>Nitin</strong></p>
+                    <p class="footer-tag">Developed by Nitin</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" data-page="home">Home</a>
+                    <a href="#" data-page="notices">Notices</a>
+                    <a href="#" data-page="materials">Materials</a>
+                    <a href="#" data-page="schedule">Schedule</a>
+                    <a href="#" data-page="gallery">Gallery</a>
+                    <a href="#" data-page="contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Jugveer Sir Textile Technology Portal. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- ================================================================
+        ADMIN DASHBOARD
+        ================================================================ -->
+        <div id="admin-panel" style="display:none;">
+
+            <div class="admin-layout">
+
+                <!-- Admin Sidebar -->
+                <aside class="admin-sidebar">
+                    <div class="admin-sidebar-brand">
+                        <span class="logo-icon">🧵</span>
+                        <span>Admin</span>
+                    </div>
+                    <nav class="admin-nav">
+                        <a href="#" data-admin="dashboard" class="admin-nav-link active">📊 Dashboard</a>
+                        <a href="#" data-admin="notices" class="admin-nav-link">📢 Notices</a>
+                        <a href="#" data-admin="announcements" class="admin-nav-link">📣 Announcements</a>
+                        <a href="#" data-admin="materials" class="admin-nav-link">📚 Materials</a>
+                        <a href="#" data-admin="schedule" class="admin-nav-link">📅 Schedule</a>
+                        <a href="#" data-admin="events" class="admin-nav-link">🎯 Events</a>
+                        <a href="#" data-admin="gallery" class="admin-nav-link">🖼️ Gallery</a>
+                        <a href="#" data-admin="pages" class="admin-nav-link">📄 Pages</a>
+                        <a href="#" data-admin="theme" class="admin-nav-link">🎨 Theme</a>
+                        <a href="#" data-admin="settings" class="admin-nav-link">⚙️ Settings</a>
+                    </nav>
+                    <div class="admin-sidebar-footer">
+                        <button id="admin-logout-btn" class="btn btn-outline btn-sm">🚪 Logout</button>
+                        <button id="admin-view-site-btn" class="btn btn-primary btn-sm">🌐 View Site</button>
+                    </div>
+                </aside>
+
+                <!-- Admin Content -->
+                <main class="admin-content">
+
+                    <!-- Admin Header -->
+                    <header class="admin-header">
+                        <h2 id="admin-page-title">📊 Dashboard</h2>
+                        <div class="admin-header-actions">
+                            <span id="admin-user-badge" class="badge">👤 Admin</span>
+                            <button id="admin-theme-toggle" class="icon-btn">🌓</button>
+                        </div>
+                    </header>
+
+                    <!-- Admin Dashboard -->
+                    <div id="admin-dashboard" class="admin-section active">
+                        <div class="admin-stats-grid">
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-notices">0</div><div class="stat-label">Notices</div></div>
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-announcements">0</div><div class="stat-label">Announcements</div></div>
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-materials">0</div><div class="stat-label">Materials</div></div>
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-events">0</div><div class="stat-label">Events</div></div>
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-gallery">0</div><div class="stat-label">Gallery</div></div>
+                            <div class="stat-card glass-card"><div class="stat-number" id="admin-stat-pages">0</div><div class="stat-label">Pages</div></div>
+                        </div>
+                        <div class="glass-card">
+                            <h3>⚡ Quick Actions</h3>
+                            <div class="quick-actions">
+                                <button class="btn btn-primary" onclick="adminNavigate('notices')">📢 Add Notice</button>
+                                <button class="btn btn-primary" onclick="adminNavigate('announcements')">📣 Add Announcement</button>
+                                <button class="btn btn-primary" onclick="adminNavigate('materials')">📚 Add Material</button>
+                                <button class="btn btn-primary" onclick="adminNavigate('schedule')">📅 Add Schedule</button>
+                                <button class="btn btn-primary" onclick="adminNavigate('events')">🎯 Add Event</button>
+                                <button class="btn btn-primary" onclick="adminNavigate('gallery')">🖼️ Add Image</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Notices -->
+                    <div id="admin-notices" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📢 Manage Notices</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddNoticeModal()">+ Add Notice</button>
+                        </div>
+                        <div id="admin-notices-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Announcements -->
+                    <div id="admin-announcements" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📣 Manage Announcements</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddAnnouncementModal()">+ Add Announcement</button>
+                        </div>
+                        <div id="admin-announcements-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Materials -->
+                    <div id="admin-materials" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📚 Manage Materials</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddMaterialModal()">+ Add Material</button>
+                        </div>
+                        <div id="admin-materials-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Schedule -->
+                    <div id="admin-schedule" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📅 Manage Schedule</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddScheduleModal()">+ Add Schedule Entry</button>
+                        </div>
+                        <div id="admin-schedule-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Events -->
+                    <div id="admin-events" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>🎯 Manage Events</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddEventModal()">+ Add Event</button>
+                        </div>
+                        <div id="admin-events-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Gallery -->
+                    <div id="admin-gallery" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>🖼️ Manage Gallery</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddGalleryModal()">+ Add Image</button>
+                        </div>
+                        <div id="admin-gallery-list" class="gallery-grid admin-gallery-grid"></div>
+                    </div>
+
+                    <!-- Admin Pages -->
+                    <div id="admin-pages" class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📄 Manage Pages</h3>
+                            <button class="btn btn-primary btn-sm" onclick="showAddPageModal()">+ New Page</button>
+                        </div>
+                        <div id="admin-pages-list" class="admin-list"></div>
+                    </div>
+
+                    <!-- Admin Theme -->
+                    <div id="admin-theme" class="admin-section">
+                        <h3>🎨 Theme Customizer</h3>
+                        <div class="theme-customizer glass-card">
+                            <div class="form-group">
+                                <label>Primary Color</label>
+                                <input type="color" id="theme-primary" value="#6C63FF" />
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary Color</label>
+                                <input type="color" id="theme-secondary" value="#FF6584" />
+                            </div>
+                            <div class="form-group">
+                                <label>Background</label>
+                                <input type="color" id="theme-bg" value="#0a0a1a" />
+                            </div>
+                            <div class="form-group">
+                                <label>Card Style</label>
+                                <select id="theme-card-style">
+                                    <option value="glass">Glassmorphism</option>
+                                    <option value="solid">Solid</option>
+                                    <option value="outline">Outline</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Theme Mode</label>
+                                <select id="theme-mode">
+                                    <option value="dark">Dark</option>
+                                    <option value="light">Light</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveThemeSettings()">💾 Save Theme</button>
+                        </div>
+                    </div>
+
+                    <!-- Admin Settings -->
+                    <div id="admin-settings" class="admin-section">
+                        <h3>⚙️ Settings</h3>
+                        <div class="glass-card">
+                            <div class="form-group">
+                                <label>Welcome Message</label>
+                                <textarea id="settings-welcome" rows="4" placeholder="Enter welcome message..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Hero Title</label>
+                                <input type="text" id="settings-hero-title" placeholder="Hero title..." />
+                            </div>
+                            <div class="form-group">
+                                <label>Hero Subtitle</label>
+                                <input type="text" id="settings-hero-subtitle" placeholder="Hero subtitle..." />
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+
+    </div><!-- /app -->
+
+
+    <!-- ================================================================
+    MODALS
+    ================================================================ -->
+
+    <!-- Notice Modal -->
+    <div id="notice-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('notice-modal')">&times;</span>
+            <h3 id="notice-modal-title">Add Notice</h3>
+            <input type="hidden" id="notice-edit-id" />
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="notice-title" placeholder="Notice title..." />
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="notice-content" rows="4" placeholder="Notice content..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="notice-date" />
+            </div>
+            <button class="btn btn-primary" onclick="saveNotice()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Announcement Modal -->
+    <div id="announcement-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('announcement-modal')">&times;</span>
+            <h3 id="announcement-modal-title">Add Announcement</h3>
+            <input type="hidden" id="announcement-edit-id" />
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="announcement-title" placeholder="Announcement title..." />
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="announcement-content" rows="4" placeholder="Announcement content..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveAnnouncement()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Material Modal -->
+    <div id="material-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('material-modal')">&times;</span>
+            <h3 id="material-modal-title">Add Material</h3>
+            <input type="hidden" id="material-edit-id" />
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="material-title" placeholder="Material title..." />
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="material-type">
+                    <option value="notes">Notes</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="pdf">PDF</option>
+                    <option value="link">Link</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="material-description" rows="3" placeholder="Description..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>File URL (or link)</label>
+                <input type="text" id="material-url" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+                <label>Upload File</label>
+                <input type="file" id="material-file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip" />
+            </div>
+            <button class="btn btn-primary" onclick="saveMaterial()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="schedule-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('schedule-modal')">&times;</span>
+            <h3 id="schedule-modal-title">Add Schedule Entry</h3>
+            <input type="hidden" id="schedule-edit-id" />
+            <div class="form-group">
+                <label>Day</label>
+                <input type="text" id="schedule-day" placeholder="e.g. Monday" />
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                <input type="text" id="schedule-time" placeholder="e.g. 10:00 AM - 11:00 AM" />
+            </div>
+            <div class="form-group">
+                <label>Subject / Activity</label>
+                <input type="text" id="schedule-subject" placeholder="Subject name..." />
+            </div>
+            <div class="form-group">
+                <label>Venue</label>
+                <input type="text" id="schedule-venue" placeholder="Room / Lab..." />
+            </div>
+            <button class="btn btn-primary" onclick="saveSchedule()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('event-modal')">&times;</span>
+            <h3 id="event-modal-title">Add Event</h3>
+            <input type="hidden" id="event-edit-id" />
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="event-title" placeholder="Event title..." />
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="event-date" />
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                <input type="text" id="event-time" placeholder="e.g. 2:00 PM" />
+            </div>
+            <div class="form-group">
+                <label>Venue</label>
+                <input type="text" id="event-venue" placeholder="Venue..." />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="event-description" rows="3" placeholder="Description..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveEvent()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('gallery-modal')">&times;</span>
+            <h3 id="gallery-modal-title">Add Gallery Image</h3>
+            <input type="hidden" id="gallery-edit-id" />
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="gallery-title" placeholder="Image title..." />
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" id="gallery-url" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" id="gallery-file" accept="image/*" />
+            </div>
+            <button class="btn btn-primary" onclick="saveGallery()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Page Modal -->
+    <div id="page-modal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="modal-close" onclick="closeModal('page-modal')">&times;</span>
+            <h3 id="page-modal-title">Add Page</h3>
+            <input type="hidden" id="page-edit-id" />
+            <div class="form-group">
+                <label>Page Name</label>
+                <input type="text" id="page-name" placeholder="e.g. About Us" />
+            </div>
+            <div class="form-group">
+                <label>Slug</label>
+                <input type="text" id="page-slug" placeholder="e.g. about-us" />
+            </div>
+            <div class="form-group">
+                <label>Content (HTML)</label>
+                <textarea id="page-content" rows="6" placeholder="Page content in HTML..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Show in Nav</label>
+                <select id="page-show-nav">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="savePage()">💾 Save</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content glass-card" style="max-width:420px;">
+            <span class="modal-close" onclick="closeModal('login-modal')">&times;</span>
+            <h3>🔐 Admin Login</h3>
+            <p style="color:var(--text-muted);font-size:0.9rem;">Only Super Admins (Jugveer Sir &amp; Nitin) can access.</p>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="admin@example.com" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" />
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()" style="width:100%;">Login</button>
+            <p id="login-error" style="color:var(--danger);font-size:0.85rem;margin-top:0.5rem;display:none;">Invalid credentials.</p>
+        </div>
+    </div>
+
+
+    <!-- ================================================================
+    SCRIPTS
+    ================================================================ -->
+    <script src="firebase.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
